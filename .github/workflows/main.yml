@@ -1,0 +1,36 @@
+name: Push Code to GitHub
+
+on:
+  push:
+    branches:
+      - main  # main 브랜치로 push될 때 실행
+
+jobs:
+  push:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. 저장소 체크아웃
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 2. Node.js 설정
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'  # Node.js 버전
+          registry-url: https://registry.npmjs.org/  # npm 기본 레지스트리 URL
+
+      # 3. Secret 환경 변수 설정
+      - name: Set secret variant
+        run: echo "VARIANT=${{ secrets.redrobpackage0212 }}" >> $GITHUB_ENV
+
+      # 4. 의존성 설치 (variant 사용)
+      - name: Install dependencies
+        run: |
+          echo "Using variant: $VARIANT"
+          npm install
+
+      # 5. 빌드
+      - name: Build package
+        run: npm run build
